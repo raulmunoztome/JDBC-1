@@ -59,6 +59,50 @@ public class Principal {
 		System.out.println("--------------------------------------\n");
 		
 		
+		System.out.println("AÑADIR UN NUEVO DEPARTAMENTO:\nIntroduce el código del departamento: ");
+		try {
+			
+			codiDep = sc.nextLine();
+			departament = Integer.parseInt(codiDep);
+			
+		} catch (NumberFormatException e) {
+			
+			System.out.println("error en el dato introducido: "+e.getMessage());
+		}
+		System.out.println("Nombre del departamento: ");
+		String nomD = sc.nextLine();
+		System.out.println("Ciudad donde se ubica el departamento: ");
+		String ciud = sc.nextLine();
+		try {
+			boolean comprobar = gestor.añadirDepartamento(departament, nomD, ciud);
+			if(comprobar) System.out.println(departament+" "+nomD+" a sido añadido");
+			else System.out.println("Ya existe en la base, no se ha añadido, pruebe otro código");
+			
+		} catch (SQLException e) {
+			System.out.println("Error de SQL: "+ e.getMessage());
+		}
+		
+		System.out.println("--------------------------------------\n");
+		
+		System.out.println("indique el id del trabajdor a eliminar: ");
+		String codigo = sc.nextLine();
+		
+		try {
+			int id = Integer.parseInt(codigo);
+			boolean confirma = gestor.eliminarEmpleadosPorCodigo(id);
+			if(confirma)System.out.println("Trabajador "+ id+" eliminado");
+
+			
+		} catch (NumberFormatException e) {
+
+			System.out.println("error en lo introducido: "+e.getMessage());
+		}
+		catch(SQLException e) {
+			System.out.println("error: "+e.getMessage());
+		}
+	
+		
+		
 		sc.close();
 
 	}
