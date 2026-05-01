@@ -9,8 +9,8 @@ public class GestorConnexions {
 	private static int connectar() {
 
 		String url = "jdbc:mysql://localhost/bd_empleats";
-		String user = "cfgs";
-		String pwd = "sol19";
+		String user = "root";
+		String pwd = "";
 
 		try {
 			connexio = DriverManager.getConnection(url, user, pwd);

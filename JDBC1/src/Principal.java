@@ -1,41 +1,64 @@
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Scanner;
 
 public class Principal {
 
-	public static void main(String[] args) throws SQLException {
+	public static void main(String[] args) {
 
 		String consulta = "SELECT * FROM DEPARTAMENTS";
-		GestorSQL gestor1 = new GestorSQL();
+		GestorSQL gestor = new GestorSQL();
 
-		ResultSet resultat = gestor.consultaSQL(consulta);
+		try (ResultSet resultat = gestor.consultaSQL(consulta)){
+			
+			while (resultat.next()) {
+				System.out.println("Codi departament: " + resultat.getInt(1) + " Nom: " + resultat.getString(2));
+			}
+		} catch (SQLException e) {
 
-		while (resultat.next()) {
-			System.out.println("Codi departament: " + resultat.getInt(1) + " Nom: " + resultat.getString(2));
-		}
-		System.out.println("--------------------------------------");
-		consulta = "SELECT codi_emp, cognom, ofici, salari, comissio FROM EMPLEATS";
-		resultat = gestor.consultaSQL(consulta);
-
-		while (resultat.next()) {
-			System.out.println("codi: " + resultat.getInt(1) + " cognom: " + resultat.getString(2) + " ofici: "
-					+ resultat.getString(3) + " salari: " + resultat.getInt(4) + " comissio: " + resultat.getInt(5));
+			System.out.println(e.getMessage());
 		}
 
-		String sql = "SELECT CODI_EMP, COGNOM FROM EMPLEATS WHERE CODI_DEPT = ?";
-		PreparedStatement sentenciaPreparada = connexio.prepareStatement(sql);
+		System.out.println("--------------------------------------\n");
+		
+		consulta = "SELECT * FROM EMPLEATS";
+		try (ResultSet resultat = gestor.consultaSQL(consulta)){
+			
+			while (resultat.next()) {
+				System.out.println("codi: " + resultat.getInt(1) + " cognom: " + resultat.getString(2) + " ofici: "
+						+ resultat.getString(3) + " salari: " + resultat.getInt(5) + " comissio: " + resultat.getInt(6));
+			}
+		} catch (SQLException e) {
+
+			System.out.println(e.getMessage());
+		}
+		System.out.println("--------------------------------------\n");
+		
 		System.out.println("Indiqui el codi del departament a consultar: ");
 		Scanner sc = new Scanner(System.in);
 		String codiDep = sc.nextLine();
+		
 		Integer departament = Integer.parseInt(codiDep);
-		sentenciaPreparada.setInt(1, departament);
-		System.out.println("EMPLEATS DEL DEPARTAMENT " + codiDep);
-		ResultSet resultat = GestorSQL
-		while (resultat.next()) {
-			System.out.println("Codi empleat: " + resultat.getInt(1) + " Cognom: " + resultat.getString(2));
+		try (ResultSet resultat = gestor.consultaCantidadEmpPorDept(departament); 
+			     ResultSet res2 = gestor.consultaEmpleadosPorCodigoDept(departament)) {
+
+			    // Primero procesamos el COUNT 
+			    if (resultat.next()) {
+			        System.out.println(resultat.getString(1) + " : " + resultat.getInt(2) + " empleados");
+			    }
+
+			    // Luego procesamos la lista de empleados
+			    while (res2.next()) {
+			        System.out.println("empleado nº " + res2.getInt(1) + " -->  " + res2.getString(2) + " : " + res2.getString(3));
+			    }
+			    
+			} catch (SQLException | NumberFormatException e) {
+
+			System.out.println(e.getMessage());
 		}
+				
+		System.out.println("--------------------------------------\n");
+		
+		
 		sc.close();
 
 	}
